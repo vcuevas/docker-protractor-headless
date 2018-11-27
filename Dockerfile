@@ -1,19 +1,12 @@
-FROM google/cloud-sdk
-MAINTAINER j.ciolek@webnicer.com
+FROM openjdk:8-jre-slim
 WORKDIR /tmp
-COPY webdriver-versions.js ./
-ENV CHROME_PACKAGE="google-chrome-stable_59.0.3071.115-1_amd64.deb" NODE_PATH=/usr/local/lib/node_modules:/protractor/node_modules
 
 RUN apt-get update && \
   apt-get install -y \
-    supervisor \
-    netcat-traditional \
     xvfb \
-    openjdk-8-jre \
+    gnupg2 \
     chromium \
-    ffmpeg \
     curl \
-    gnupg \
     sudo \
   && \
   apt-get clean && \
@@ -27,7 +20,7 @@ RUN curl -sL https://deb.nodesource.com/setup_8.x | bash - && \
 
 # Install Protractor and initialized Webdriver
 RUN npm install -g protractor@^5.4 && \
-  webdriver-manager update
+  webdriver-manager update --gecko=false
 COPY protractor.sh /
 COPY environment /etc/sudoers.d/
 # Fix for the issue with Selenium, as described here:
